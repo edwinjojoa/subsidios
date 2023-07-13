@@ -1,0 +1,23 @@
+# Vamos a definir los servicios y contenedores a usar
+version: '3.7'
+
+services:
+
+    est_proceso_grado:
+        container_name: est_proceso_grado
+        restart: always
+        build:
+            context: ./
+        ports:
+            - 3100:8080
+        volumes:
+            - ./docSubidos/:/app5/public/
+            # - /stgruah/data/datos/ruadata/ruah+storage/:/app5/public/
+
+
+        networks:
+            - dev_env_network
+
+networks:
+    dev_env_network:
+        driver: bridge
