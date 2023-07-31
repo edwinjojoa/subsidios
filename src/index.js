@@ -3,9 +3,11 @@ const matricula = require("./v1/routes/matriculas-epg");
 const cargue_documentos = require("./v1/routes/cargue-documentos");
 const revision_documentos = require("./v1/routes/revision_documentos");
 const consultar_proceso = require("./v1/routes/consultar_proceso");
+const subsidio_estudiantes = require("./v1/routes/subsidios/subsidio_estudiantes");
 const cors = require("cors");
 const { application } = require("express");
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const { log } = require("handlebars");
 
 
 const app = express();
@@ -19,7 +21,7 @@ app.use("/proceso-grado", matricula);
 app.use("/cargue-documentos",cargue_documentos);
 app.use("/revision-documentos",revision_documentos);
 app.use("/consultar-proceso",consultar_proceso);
-app.use("/subdidio",consultar_proceso);
+app.use("/subsidio_estudiantes",subsidio_estudiantes);
 
 app.listen(PORT, () => {
     console.log(`🚀 Ecuchando en el puerto  ${PORT} para estudiantes en  proceso de grado`);
