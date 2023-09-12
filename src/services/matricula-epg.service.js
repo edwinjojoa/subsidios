@@ -300,24 +300,6 @@ async function consultarsemestre(params) {
     console.log(e);
   }
 };
-// async function updatedatospersonales(params) {
-//   try {
-
-//     const response = await pool.query(`
-    
-//     `,[barrio,direccion,telefono,correo,expedicion,id_persona]
-//     );
-//     console.log(response.rows);
-//     return response.rows;
-
-//   } catch (e) {
-//     throw error;
-//     console.log(e);
-//   }
-// };
-
-  //////////////
-
   module.exports = {
  
     getClientes,
