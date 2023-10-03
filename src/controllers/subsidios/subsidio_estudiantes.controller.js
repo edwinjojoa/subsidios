@@ -90,7 +90,7 @@ const guardarInscripcion = async (req, res) => {
             }
             main().catch(console.error);
             //--------------------------
-            res.send({ message: 'La solicitud sea guardado exitosamente y a obtenido el cupo numero <b>' + verificacionEmaiEE.consecutivo + '</b>' });
+            res.send({ message: 'La solicitud se ha registrado correctamente <p><b>Cupo numero ' + verificacionEmaiEE.consecutivo + '</b> </p> Verificar su Correo Electronico' });
 
         }
     } catch (error) {

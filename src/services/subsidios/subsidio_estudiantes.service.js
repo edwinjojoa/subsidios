@@ -47,11 +47,30 @@ const buscarEstudiante = async (documento) => {
     SPLIT_PART(p.correo_electronico, ',', 1) As email,
     s.numero as  SEMESTRE,
     prg.nombre as programa,
-    nf.sisben as sisben_nucleo,
+    nf.sisben as sisben,
     CASE 
 		WHEN sub.id_periodo_academico=m.id_periodo_academico  THEN sub.consecutivo
 		ELSE ''
-    END as numero_cupo
+    END as numero_cupo,
+		CASE 
+		WHEN 
+		(
+		select
+		case when count(ng.id_tipo_nota) > 0 then 'No_habilitado'
+		else 'Habilitado' end as desactivar_cupo
+		from personas p
+		inner join estudiantes e on p.id = e.id_persona
+		inner join asignaturas_aprobadas aap	on e.id = aap.id_estudiante
+		inner join notas_generales ng on aap.id_nota_general = ng.id 
+		inner join tipos_notas tn on ng.id_tipo_nota = tn.id 
+		and ng.id_tipo_nota in ('14','15','1') 
+		inner join periodos_academicos pa on aap.id_periodo_academico = pa.id
+		WHERE p.numero_identificacion= $1 ------------------------------------------colocar los dos numero de cedula arriba y abajo
+		group by ng.id_tipo_nota
+    limit 1
+		)is null  then 'habilitado'
+		ELSE 'No_Habilitado'
+    END as desactivar_cupo
     from personas p
     INNER JOIN estudiantes e on p.id=e.id_persona
     INNER JOIN zeus.matriculas m on e.id=m.id_estudiante
@@ -60,10 +79,12 @@ const buscarEstudiante = async (documento) => {
     LEFT JOIN nucleos_familiares nf on p.id=nf.id_persona
     LEFT JOIN subsidios sub on p.id=sub.id_persona
     WHERE 
-    TRIM(p.numero_identificacion) = $1
+    TRIM(p.numero_identificacion) = $1 -----------------------------------------------colocar los dos numero de cedula arriba y abajo
     and m.id_periodo_academico=(SELECT id from periodos_academicos WHERE estado=2)
     and e.id_estado_estudiante  = 3 
+    and prg.id not in ('67','73','60','71','69','66','72','59','70','68')
     ORDER BY s.numero desc limit 1
+
         `, [documento]);
 
     return response.rows;
@@ -92,7 +113,7 @@ async function obtener_TiposDocumentos(params) {
         WHERE
           estado = $1
         ORDER BY
-          descripcion
+          id
 				`, [true]
     );
     //console.log(response.rows);
@@ -110,8 +131,8 @@ async function obtener_tipoSisben(params) {
     // console.log(data, 'dataaa');
     const response = await pool.query(`
       SELECT 
-      valor,
-			nombre as sisben_nucleo
+      valor::int,
+			nombre as sisben
       from opciones 
       WHERE razon='6444' 
       and activa_casilla =$1
